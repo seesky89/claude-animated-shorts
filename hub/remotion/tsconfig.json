@@ -12,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@current-project/*": ["../../projects/bridge/scene/*"],
       "@core/*": ["src/core/*"],
       "@project/*": ["../../projects/*"],
       "./paint": ["src/core/paint"],

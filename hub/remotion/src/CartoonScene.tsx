@@ -10,21 +10,11 @@ import { InkPass, noInkFallback } from "./core/ink";
 import { LensBlur, GrainEffect } from "./core/lensblur";
 import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./core/grade";
 
-export type WorldModule = {
-  World: new (kit: any) => {
-    root: THREE.Object3D;
-    update: (id: number, f: number, cam: THREE.PerspectiveCamera, scene: THREE.Scene) => THREE.Vector3;
-  };
-  loadKit: () => Promise<any>;
-};
-
-export type StoryModule = {
-  TOTAL: number;
-  FLASH_AT?: number;
-  SHOTS: Array<{ light: "day" | "golden"; [key: string]: any }>;
-  layersAt: (f: number) => Array<[number, number]>;
-  dofAt: (f: number) => { focus?: (f: number) => [number, number, number]; cInf: number };
-};
+// Dynamically bound project scene modules via Webpack alias
+// @ts-ignore
+import { World, loadKit } from "@current-project/world";
+// @ts-ignore
+import { TOTAL, FLASH_AT, SHOTS, layersAt, dofAt } from "@current-project/story";
 
 type PostToggles = { ink: boolean; lens: boolean; pre: boolean; bloom: boolean; grade: boolean; grain: boolean };
 const toggles = (): PostToggles => ({
@@ -50,15 +40,10 @@ const makeBloom = () => {
 
 const fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
 
-const Inner: React.FC<{
-  id: number;
-  kit: any;
-  worldModule: WorldModule;
-  storyModule: StoryModule;
-}> = ({ id, kit, worldModule, storyModule }) => {
+const Inner: React.FC<{ id: number; kit: any }> = ({ id, kit }) => {
   const f = useCurrentFrame();
   const { camera, scene } = useThree();
-  const world = useMemo(() => new worldModule.World(kit), [kit, worldModule]);
+  const world = useMemo(() => new World(kit), [kit]);
   const target = useMemo(() => new THREE.Vector3(), []);
   const on = useMemo(toggles, []);
   const fx = useMemo(() => ({
@@ -70,7 +55,20 @@ const Inner: React.FC<{
     grain: new GrainEffect({ amount: 0.025, cellPx: 1.5 }),
   }), [camera, scene]);
 
-  useEffect(() => () => fx.ink.dispose(), [fx]);
+  // Protect against R3F unmount modifying dispose property
+  useEffect(() => {
+    const inkToDispose = fx.ink;
+    const disposeFn = typeof inkToDispose?.dispose === "function" ? inkToDispose.dispose.bind(inkToDispose) : null;
+    return () => {
+      if (disposeFn) {
+        try {
+          disposeFn();
+        } catch {
+          // ignore already disposed
+        }
+      }
+    };
+  }, [fx]);
 
   const post = useMemo(() => (
     <EffectComposer multisampling={4}>
@@ -88,15 +86,20 @@ const Inner: React.FC<{
   target.copy(world.update(id, f, cam, scene));
   noInkFallback(world.root);
 
-  const d = storyModule.dofAt(f);
+  const d = dofAt(f);
   cam.getWorldDirection(fwd);
-  if (d.focus) fpt.set(...d.focus(f));
-  else fpt.copy(target);
+  if (d.focus) {
+    const [fx0, fy0, fz0] = d.focus(f);
+    fpt.set(fx0, fy0, fz0);
+  } else {
+    fpt.copy(target);
+  }
 
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
   fx.lens.cInf = d.cInf;
 
-  const shotLight = storyModule.SHOTS[id - 1]?.light ?? "day";
+  const shotDef = SHOTS.find((s: any) => s.id === id);
+  const shotLight = shotDef?.light ?? "day";
   gradeFor(fx.grade, shotLight);
   fx.grain.seed = f;
 
@@ -110,27 +113,30 @@ const Inner: React.FC<{
 
 const dprOverride = () => (getInputProps() as { post?: { dpr?: number } }).post?.dpr;
 
-export const CartoonScene: React.FC<{
-  worldModule: WorldModule;
-  storyModule: StoryModule;
-}> = ({ worldModule, storyModule }) => {
+export const CartoonScene: React.FC = () => {
   const [kit, setKit] = useState<any | null>(null);
   const [handle] = useState(() => delayRender("loading kit"));
   useEffect(() => {
-    worldModule.loadKit().then((k) => {
+    loadKit().then((k: any) => {
       setKit(k);
       continueRender(handle);
     });
-  }, [handle, worldModule]);
+  }, [handle]);
 
   const f = useCurrentFrame();
-  const layers = storyModule.layersAt(f);
+  const rawLayers = layersAt(f);
+  // Support both [{id, alpha}] and [[id, alpha]] formats
+  const layers: { id: number; alpha: number }[] = rawLayers.map((l: any) => 
+    Array.isArray(l) ? { id: l[0], alpha: l[1] } : l
+  );
+
   if (!kit) return null;
 
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      {layers.map(([id, alpha]) => (
-        <AbsoluteFill key={id} style={{ opacity: alpha }}>
+      {/* Reuse only 2 canvas contexts (base and over) to prevent Chrome WebGL context loss */}
+      {layers.map(({ id, alpha }, i) => (
+        <AbsoluteFill key={i ? "over" : "base"} style={{ opacity: alpha }}>
           <ThreeCanvas
             width={1080}
             height={1920}
@@ -139,12 +145,12 @@ export const CartoonScene: React.FC<{
             gl={{ antialias: false, stencil: false, powerPreference: "high-performance", toneMappingExposure: 1.0 }}
             camera={{ fov: 40, near: 0.2, far: 1500 }}
           >
-            <Inner id={id} kit={kit} worldModule={worldModule} storyModule={storyModule} />
+            <Inner id={id} kit={kit} />
           </ThreeCanvas>
         </AbsoluteFill>
       ))}
-      {storyModule.FLASH_AT !== undefined && f >= storyModule.FLASH_AT && f < storyModule.FLASH_AT + 4 ? (
-        <AbsoluteFill style={{ background: "#fff", opacity: (storyModule.FLASH_AT + 4 - f) / 4 }} />
+      {FLASH_AT !== undefined && f >= FLASH_AT && f < FLASH_AT + 4 ? (
+        <AbsoluteFill style={{ background: "#fff", opacity: (FLASH_AT + 4 - f) / 4 }} />
       ) : null}
     </AbsoluteFill>
   );

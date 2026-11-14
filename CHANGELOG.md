@@ -19,6 +19,17 @@
 
 ---
 
+## [v1.1.2] - 2026-11-14
+### Fixed & Improved (3D 렌더링 엔진 안정화 및 WebGL 누수 방지 이식)
+- **Remotion 3D 렌더링 파이프라인 동적 번들링 및 최적화 (`hub/remotion/`)**:
+  - **WebGL Context 누수 방지 (`CartoonScene.tsx`)**: 샷 전환 시 `ThreeCanvas`의 불필요한 재생성을 방지하기 위해 `key={i ? "over" : "base"}` 캔버스 재사용 구조를 적용하여, 1,300 프레임 부근에서 브라우저 WebGL Context 한도(16개) 초과로 발생하던 Context Loss 크래시 원천 차단.
+  - **R3F 샷 컷 Unmount Dispose 보호 (`CartoonScene.tsx`)**: 샷 전환(130 프레임) 시 `@react-three/fiber`가 `<primitive dispose={null}>`을 unmount할 때 `dispose` 참조를 덮어써 발생하던 `TypeError: fx.ink.dispose is not a function` 크래시를 방지하기 위해 클로저 캡처 및 예외 안전 가드 적용.
+  - **동적 프로젝트 번들링 스크립트 고도화 (`scripts/render.mjs`, `scripts/stills.mjs`)**: Webpack alias(`@current-project`)를 통해 Hub 엔진을 재빌드하지 않고도 `projects/<name>`의 3D 씬을 즉시 마운트하여 렌더링할 수 있도록 지원.
+  - **순차 인코딩(`concurrency: 1`) 및 Chromium 안정화 플래그 적용**: WebGL 멀티프로세스 파이프 충돌(`write EOF`) 방지.
+- **버전 동기화**: `hub/remotion/package.json` (v1.1.2) 동기화 완료.
+
+---
+
 ## [v1.1.1] - 2026-11-14
 ### Fixed
 - **hub/remotion npm install 피어 의존성 충돌 해결**:

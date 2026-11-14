@@ -2,9 +2,8 @@ import React from "react";
 import { Composition } from "remotion";
 import { CartoonScene } from "./CartoonScene";
 
-// Bridge demo modules
-import * as bridgeWorld from "../../../projects/bridge/world";
-import * as bridgeStory from "../../../projects/bridge/story";
+// @ts-ignore
+import { TOTAL } from "@current-project/story";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -12,14 +11,10 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="BridgeShort"
         component={CartoonScene}
-        durationInFrames={bridgeStory.TOTAL}
+        durationInFrames={TOTAL || 2025}
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{
-          worldModule: bridgeWorld,
-          storyModule: bridgeStory,
-        }}
       />
     </>
   );
