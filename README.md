@@ -27,7 +27,22 @@ pip install numpy scipy edge-tts
 pip install openai-whisper
 ```
 
-### 3. CLI 전역 등록 (선택)
+### 3. API 키 설정 (AI 대본 자동 생성용)
+```bash
+# 템플릿을 복사하여 .env 파일을 생성합니다 (.env는 .gitignore에 등록되어 git에 절대 커밋되지 않습니다)
+cp .env.example .env
+```
+`.env` 파일을 열고 사용하실 LLM(Gemini / OpenAI / Claude) 중 원하는 키를 입력합니다:
+```env
+# Google Gemini API (빠르고 무료 티어 제공, 추천)
+GEMINI_API_KEY=AIzaSy...
+
+# 또는 OpenAI / Claude / 로컬 Ollama
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### 4. CLI 전역 등록 (선택)
 ```bash
 npm link
 # 이제 어디서나 `shorts` 명령어를 직접 사용할 수 있습니다.
@@ -40,9 +55,7 @@ npm link
 
 ### 🌟 초간단 방법: 주제만 던지면 대본부터 렌더링까지 전자동 완성 (추천!)
 ```bash
-# Gemini, OpenAI, Claude 중 하나의 API 키가 설정되어 있으면 AI가 Style Bible 공식에 맞춰 대본까지 완벽 작성합니다.
-export GEMINI_API_KEY="your-api-key"   # 또는 OPENAI_API_KEY / ANTHROPIC_API_KEY
-
+# .env에 API 키가 설정되어 있으면 AI가 Style Bible 공식에 맞춰 대본까지 완벽 작성합니다.
 shorts create my-titanic-story --topic "타이타닉 침몰 원인 중 연철 리벳의 결함 이야기" --2k
 ```
 - **프로젝트 생성** ➡️ **대본 AI 작성** ➡️ **음성(TTS) 합성** ➡️ **단어 타임스탬프(STT)** ➡️ **BGM Ducking 믹스** ➡️ **2K 3D 렌더링**이 한 번에 끝납니다!

@@ -20,6 +20,16 @@
 
 ---
 
+## [v2.1.1] - 2026-11-14
+### Security & Configuration
+- **API 키 파일 관리 및 Git 업로드 원천 차단 (`.env`)**:
+  - API 키를 안전하게 보관할 수 있도록 `.env` 파일 자동 로더(`load_env_file()`, `loadEnv()`)를 `packages/voice/script_gen.py` 및 `cli/bin/shorts.mjs`에 구현.
+  - `.gitignore`에 `.env`, `.env.*`, `*.env`, `keys.json`을 명시하여 실제 API 키가 GitHub에 절대 업로드되지 않도록 보안 방어 구축.
+  - 신규 사용자가 쉽게 복사해 사용할 수 있도록 템플릿 `.env.example` 추가 및 `README.md` 설정 가이드 보강.
+- **버전 동기화**: `package.json` (v2.1.1) 동기화 완료.
+
+---
+
 ## [v2.1.0] - 2026-11-14
 ### Added
 - **AI 대본 자동 생성 기능 내장 (`shorts script`, `shorts create`)**:

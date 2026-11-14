@@ -7,6 +7,25 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "../..");
 
+// Load .env automatically if present
+function loadEnv() {
+  const envPath = path.resolve(ROOT, ".env");
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, "utf-8").split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+      const [k, ...v] = trimmed.split("=");
+      const key = k.trim();
+      const val = v.join("=").trim().replace(/^['"]|['"]$/g, "");
+      if (key && !process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+loadEnv();
+
 const USAGE = `
 =============================================================
 Cartoon Animated Shorts Engine CLI — v2.1.0

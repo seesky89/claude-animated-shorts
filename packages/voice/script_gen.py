@@ -101,7 +101,33 @@ def generate_with_ollama(topic, host="http://localhost:11434"):
         data = json.loads(resp.read().decode("utf-8"))
         return data["response"].strip()
 
+def load_env_file():
+    """Load key-value pairs from .env in project root or current directory into os.environ."""
+    candidates = [
+        os.path.abspath(".env"),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.env")),
+        os.path.expanduser("~/.config/cartoon-shorts/.env")
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as fp:
+                    for line in fp:
+                        line = line.strip()
+                        if not line or line.startswith("#") or "=" not in line:
+                            continue
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k and not os.environ.get(k):
+                            os.environ[k] = v
+                print(f"[CONFIG] Loaded API keys from: {path}")
+                break
+            except Exception as e:
+                print(f"[WARN] Failed to read .env from {path}: {e}")
+
 def generate_script(topic, out_file=None):
+    load_env_file()
     gemini_key = os.environ.get("GEMINI_API_KEY")
     openai_key = os.environ.get("OPENAI_API_KEY")
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
