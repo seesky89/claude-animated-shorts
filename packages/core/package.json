@@ -1,0 +1,26 @@
+{
+  "name": "@cartoon-shorts/core",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "bundle": "remotion bundle",
+    "preview": "remotion preview src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^8.16.8",
+    "@react-three/postprocessing": "^2.16.2",
+    "@remotion/three": "^4.0.220",
+    "postprocessing": "^6.36.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.220",
+    "three": "^0.166.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/three": "^0.166.0",
+    "typescript": "^5.5.3"
+  }
+}

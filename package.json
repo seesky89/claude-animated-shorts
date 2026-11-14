@@ -1,0 +1,25 @@
+{
+  "name": "claude-animated-shorts-engine",
+  "version": "2.0.0",
+  "description": "Standalone CLI engine for 2D-in-3D animated cartoon shorts",
+  "type": "module",
+  "bin": {
+    "shorts": "./cli/bin/shorts.mjs"
+  },
+  "scripts": {
+    "shorts": "node ./cli/bin/shorts.mjs",
+    "clean": "node ./cli/bin/shorts.mjs clean"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "keywords": [
+    "remotion",
+    "threejs",
+    "shorts",
+    "animation",
+    "video-generator"
+  ],
+  "author": "",
+  "license": "MIT"
+}
