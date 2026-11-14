@@ -1,6 +1,6 @@
 {
   "name": "claude-animated-shorts-engine",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Standalone CLI engine for 2D-in-3D animated cartoon shorts",
   "type": "module",
   "bin": {

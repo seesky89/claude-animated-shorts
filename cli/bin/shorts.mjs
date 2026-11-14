@@ -174,9 +174,9 @@ switch (command) {
     const rawMp4 = path.join(proj, "out", "video_raw.mp4");
     const finalMp4 = path.join(proj, "out", "final.mp4");
     const mixWav = path.join(proj, "out", "mix.wav");
-    const coreDir = path.resolve(ROOT, "packages/core");
+    const renderScript = path.resolve(ROOT, "packages/core/render.mjs");
 
-    runCmd(`npx remotion render src/index.ts BridgeShort "${rawMp4}" --codec h264 --crf 16 --scale ${scale}`, coreDir);
+    runCmd(`node "${renderScript}" BridgeShort "${rawMp4}" ${scale}`, path.resolve(ROOT, "packages/core"));
     if (fs.existsSync(mixWav)) {
       runCmd(`ffmpeg -y -i "${rawMp4}" -i "${mixWav}" -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 320k "${finalMp4}"`);
     }
@@ -300,7 +300,8 @@ Callback twist ending.
     const coreDir = path.resolve(ROOT, "packages/core");
 
     console.log(`[RENDER] Rendering 3D animation (scale: ${scale})...`);
-    runCmd(`npx remotion render src/index.ts BridgeShort "${rawMp4}" --codec h264 --crf 16 --scale ${scale}`, coreDir);
+    const renderScript = path.resolve(ROOT, "packages/core/render.mjs");
+    runCmd(`node "${renderScript}" BridgeShort "${rawMp4}" ${scale}`, path.resolve(ROOT, "packages/core"));
 
     if (fs.existsSync(mixWav)) {
       console.log(`[MUX] Muxing video with mix.wav into final.mp4...`);

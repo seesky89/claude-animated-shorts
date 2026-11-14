@@ -20,6 +20,17 @@
 
 ---
 
+## [v2.1.3] - 2026-11-14
+### Fixed & Improved
+- **Remotion 3D 애니메이션 동적 렌더링 및 샷 전환 안정화**:
+  - **WebGL 동시성 최적화 (`render.mjs`)**: Puppeteer 멀티탭 병렬 렌더링 시 발생하던 GPU/ffmpeg 파이프 충돌(`write EOF`)을 방지하기 위해 `concurrency: 1` 및 안정적 크롬 실행 플래그(`--disable-dev-shm-usage`, `--no-sandbox`) 설정.
+  - **R3F 샷 컷 Unmount Dispose 보호 (`CartoonScene.tsx`)**: 샷 전환(예: 130 프레임) 시 `@react-three/fiber`가 `<primitive dispose={null}>`을 unmount할 때 `dispose` 참조를 손상시켜 발생하던 `TypeError: fx.ink.dispose is not a function` 크래시를 방지하기 위해 인스턴스 클로저 캡처 및 예외 안전 가드 적용.
+  - **WebGL Context 누수 방지 및 다중 캔버스 재사용 (`CartoonScene.tsx`)**: 샷 전환 시 `ThreeCanvas key={id}`로 인해 브라우저 WebGL Context 한도(16개)가 초과되어 1,300 프레임 부근에서 발생하던 Context Loss 크래시를 `key={i ? "over" : "base"}` 캔버스 재사용 구조로 개편하여 최대 2개의 Context로 2,025 프레임 전 구간 안정 렌더링 지원.
+  - **동적 프로젝트 번들링 완료**: Webpack alias(`@current-project`)를 통해 Remotion JSON 직렬화 제약 없이 개별 프로젝트 폴더의 3D 씬을 단일 코어 엔진에서 즉시 로드하여 최종 렌더링 지원.
+- **버전 동기화**: `package.json` (v2.1.3) 동기화 완료.
+
+---
+
 ## [v2.1.2] - 2026-11-14
 ### Fixed & Improved
 - **대본만 존재하는 프로젝트에 대한 자동 스켈레톤 보충 (`shorts build`)**:

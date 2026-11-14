@@ -12,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@current-project/*": ["../../projects/bridge-1831/scene/*"],
       "@shaders/*": ["src/shaders/*"],
       "@toon/*": ["src/toon/*"],
       "./paint": ["src/shaders/paint"],
