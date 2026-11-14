@@ -19,6 +19,24 @@
 
 ---
 
+## [v1.1.5] - 2026-11-14
+### Added & Changed (스리니바사 라마누잔 프로젝트 및 Git 관리 최적화)
+- **개별 프로젝트 디렉토리 Git 추적 제외 (`.gitignore`)**:
+  - `projects/` 및 `remotion-tmp/`를 `.gitignore`에 등록하여 향후 생성되는 모든 쇼츠 하위 프로젝트와 렌더링 임시 번들이 Git 추적 및 업로드 대상에서 자동 제외되도록 조치.
+- **신규 쇼츠 프로젝트 생성 (`projects/ramanujan/`)**:
+  - 인도의 천재 수학자 '스리니바사 라마누잔'의 신비로운 실화(꿈속에서 나마기리 여신이 계시한 수천 개의 무증명 공식과 100년 후 블랙홀 이론의 토대)를 다룬 미스터리 다큐멘터리 쇼츠 제작.
+- **고음질 성우 내레이션 & 단어 단위 자막 동기화 (`projects/ramanujan/voice/`)**:
+  - `ko-KR-InJoonNeural` 보이스 기반 다큐멘터리 톤의 한국어 음성(`voice.wav`, 48 kHz PCM, 71.0초) 생성.
+  - VTT 기반 102개 단어 단위 정확한 타임스탬프(`words.json`) 추출 및 동기화.
+- **오디오 DSP 및 타임라인 구축 (`projects/ramanujan/audio/`)**:
+  - 15개 샷(총 2,130 프레임)과 연동된 `timeline.py` 구축.
+  - 중앙 오디오 믹서(`hub/audio/mix.py`) 연동으로 통합 라우드니스 **-15.47 LUFS**, 피크 **-0.43 dBTP** 규격 달성.
+- **Three.js + Remotion 3D 렌더링 파이프라인 구동 (`projects/ramanujan/out/`)**:
+  - Remotion 동적 번들링 및 Angle 가속 기반 순차 렌더링 파이프라인 실행.
+- **버전 동기화**: `hub/remotion/package.json` (v1.1.5) 동기화 완료.
+
+---
+
 ## [v1.1.4] - 2026-11-14
 ### Added & Improved (세션 시작 가이드 및 생명주기 훅 보강)
 - **Antigravity 세션 시작 훅 추가 (`.agents/hooks.json`, `.agents/session_start.py`)**:

@@ -17,6 +17,10 @@ __pycache__/
 _cache/
 *.npy
 
+# Projects (Individual Shorts)
+projects/
+remotion-tmp/
+
 # Media Artifacts
 *.wav
 *.mp4
