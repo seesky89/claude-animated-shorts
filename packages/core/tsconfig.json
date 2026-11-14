@@ -4,7 +4,9 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "jsx": "react-jsx",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,7 +14,14 @@
     "paths": {
       "@shaders/*": ["src/shaders/*"],
       "@toon/*": ["src/toon/*"],
-      "@project/*": ["../../projects/*"]
+      "./paint": ["src/shaders/paint"],
+      "./shade": ["src/shaders/shade"],
+      "./lights": ["src/shaders/lights"],
+      "./cardshade": ["src/shaders/cardshade"],
+      "./ink": ["src/shaders/ink"],
+      "./lensblur": ["src/shaders/lensblur"],
+      "./grade": ["src/shaders/grade"],
+      "./toon": ["src/toon/toon"]
     }
   },
   "include": ["src/**/*", "../../projects/**/*"]

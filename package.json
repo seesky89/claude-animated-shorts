@@ -1,6 +1,6 @@
 {
   "name": "claude-animated-shorts-engine",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Standalone CLI engine for 2D-in-3D animated cartoon shorts",
   "type": "module",
   "bin": {
@@ -13,6 +13,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "overrides": {
+    "postprocessing": "6.36.4",
+    "three": "0.166.1"
+  },
   "keywords": [
     "remotion",
     "threejs",

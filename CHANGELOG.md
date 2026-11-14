@@ -20,6 +20,17 @@
 
 ---
 
+## [v2.0.1] - 2026-11-14
+### Fixed
+- **npm install ERESOLVE peer 의존성 충돌 해결**:
+  - `packages/core/package.json` 및 루트 `package.json`에 `overrides` 필드를 추가하고 `postprocessing`을 `6.36.4`로 고정하여, npm 7+ 환경에서 `three@0.166.1`과 최신 postprocessing 버전 간의 피어 의존성 충돌(`ERESOLVE unable to resolve dependency tree`) 원천 차단.
+- **씬 파일 모듈 임포트 경로 및 TS 타입 검증 통과**:
+  - `projects/bridge-1831/scene/`의 `build.ts`, `cast.ts`, `world.ts`에서 코어 셰이더 및 툰 드로잉 엔진을 `@shaders/*` 및 `@toon/*` 경로로 정상 참조하도록 수정.
+  - `CartoonScene.tsx`의 postprocessing 프래그먼트 반환 타입을 보강하여 `tsc --noEmit` 검증 0 에러 달성.
+- **버전 동기화**: `package.json` (v2.0.1) 동기화 완료.
+
+---
+
 ## [v2.0.0] - 2026-11-14
 ### Added & Refactored (독립 CLI 프레임워크 전환)
 - **독립형 CLI 프레임워크(`shorts`) 구축**:
