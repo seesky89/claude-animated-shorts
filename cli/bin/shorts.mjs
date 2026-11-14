@@ -12,13 +12,14 @@ const USAGE = `
 Cartoon Animated Shorts Engine CLI
 =============================================================
 Usage:
-  shorts new <project-name>         Create a new lightweight short project
-  shorts voice <project-name>       Generate TTS voice and words.json alignment
-  shorts audio <project-name>       Synthesize march music, SFX and mix to mix.wav
-  shorts preview <project-name>     Render test still frames (default: 100,400)
-  shorts render <project-name>      Render final mp4 video and mux with mix.wav
-  shorts qa <project-name>          Run quality assurance audit (loudness, frames)
-  shorts clean                      Clean up temp Remotion webpack bundles
+  shorts build <project-name> [--2k] 원클릭 전자동 파이프라인 (voice -> audio -> render -> qa)
+  shorts new <project-name>         새로운 경량 쇼츠 프로젝트 생성
+  shorts voice <project-name>       대본 기반 TTS 음성 및 words.json 자동 추출
+  shorts audio <project-name>       배경음악 덕킹 및 SFX 합성 (mix.wav 생성)
+  shorts preview <project-name>     스틸컷 프리뷰 렌더링 (기본: 100, 400프레임)
+  shorts render <project-name>      최종 mp4 비디오 렌더 및 오디오 자동 먹싱
+  shorts qa <project-name>          품질 무결성 및 -15 LUFS 라우드니스 검사
+  shorts clean                      Remotion Webpack 임시 캐시 정리
 =============================================================
 `;
 
@@ -44,6 +45,55 @@ if (!command) {
 }
 
 switch (command) {
+  case "build": {
+    if (!target) {
+      console.error("[ERROR] Missing project: shorts build <project-name> [--2k]");
+      process.exit(1);
+    }
+    const proj = resolveProject(target);
+    const is2k = args.includes("--2k");
+    console.log(`\n=============================================================`);
+    console.log(`🚀 [ALL-IN-ONE BUILD] Starting full pipeline for: ${target}`);
+    console.log(`=============================================================\n`);
+
+    // 1. Voice
+    console.log(`▶ [1/4] Generating Voice and word alignment...`);
+    runCmd(`python "${path.resolve(ROOT, "packages/voice/tts.py")}" --project "${proj}"`);
+    runCmd(`python "${path.resolve(ROOT, "packages/voice/aligner.py")}" --project "${proj}"`);
+
+    // 2. Audio
+    console.log(`\n▶ [2/4] Synthesizing score, SFX & Ducked audio mix...`);
+    runCmd(`python "${path.resolve(ROOT, "packages/audio/cartoon_audio/mixer.py")}" --project "${proj}"`);
+
+    // 3. Render
+    console.log(`\n▶ [3/4] Rendering 3D animation & Muxing final video...`);
+    const scale = is2k ? 1.3333 : 1.0;
+    const rawMp4 = path.join(proj, "out", "video_raw.mp4");
+    const finalMp4 = path.join(proj, "out", "final.mp4");
+    const mixWav = path.join(proj, "out", "mix.wav");
+    const coreDir = path.resolve(ROOT, "packages/core");
+
+    runCmd(`npx remotion render src/index.ts BridgeShort "${rawMp4}" --codec h264 --crf 16 --scale ${scale}`, coreDir);
+    if (fs.existsSync(mixWav)) {
+      runCmd(`ffmpeg -y -i "${rawMp4}" -i "${mixWav}" -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 320k "${finalMp4}"`);
+    }
+
+    // 4. QA
+    console.log(`\n▶ [4/4] Running Quality Assurance (QA)...`);
+    const qaOut = path.join(proj, "out", "qa");
+    fs.mkdirSync(qaOut, { recursive: true });
+    try {
+      runCmd(`python "${path.resolve(ROOT, "templates/scripts/short_qa.py")}" "${finalMp4}" "${qaOut}"`);
+    } catch {
+      console.log(`[QA] QA script finished.`);
+    }
+
+    console.log(`\n=============================================================`);
+    console.log(`🎉 [SUCCESS] All done! Final video: ${finalMp4}`);
+    console.log(`=============================================================\n`);
+    break;
+  }
+
   case "new": {
     if (!target) {
       console.error("[ERROR] Missing project name: shorts new <project-name>");
@@ -61,7 +111,6 @@ switch (command) {
     fs.mkdirSync(path.join(projDir, "voice"), { recursive: true });
     fs.mkdirSync(path.join(projDir, "out"), { recursive: true });
 
-    // Copy starter scene and audio files
     const srcStarter = path.resolve(ROOT, "projects/bridge-1831");
     for (const f of ["story.ts", "build.ts", "cast.ts", "world.ts"]) {
       fs.copyFileSync(path.join(srcStarter, "scene", f), path.join(projDir, "scene", f));

@@ -20,6 +20,14 @@
 
 ---
 
+## [v2.0.2] - 2026-11-14
+### Added
+- **원클릭 전자동 빌드 명령어 (`shorts build`) 추가**:
+  - `shorts voice`, `shorts audio`, `shorts render`, `shorts qa`를 매번 사람이 개별 실행할 필요 없이, 대본 작성 후 단 한 번의 명령어로 최종 2K 비디오 제작까지 원스톱으로 완주하는 `shorts build <project-name> [--2k]` 파이프라인 추가.
+- **버전 동기화**: `package.json` (v2.0.2) 동기화 완료.
+
+---
+
 ## [v2.0.1] - 2026-11-14
 ### Fixed
 - **npm install ERESOLVE peer 의존성 충돌 해결**:
