@@ -14,24 +14,36 @@ import struct
 import numpy as np
 
 def extract_script_text(script_path):
-    """Extract narrator dialogue from SCRIPT.md, ignoring headers and metadata."""
+    """Extract narrator dialogue from SCRIPT.md, ignoring headers, metadata, and non-English sections."""
     if not os.path.exists(script_path):
         raise FileNotFoundError(f"Script file not found: {script_path}")
     
     with open(script_path, "r", encoding="utf-8") as fp:
-        lines = fp.readlines()
+        raw_text = fp.read()
 
+    # If document has marked English script section, take that section only
+    if "[English Narration Script]" in raw_text:
+        sections = re.split(r"###\s*\[.*?\]", raw_text)
+        for sec in sections:
+            if "Half the people" in sec or "walk" in sec: # Target narration section
+                raw_text = sec
+                break
+
+    lines = raw_text.splitlines()
     dialogue_lines = []
-    in_dialogue = False
     for line in lines:
         stripped = line.strip()
-        if not stripped or stripped.startswith("#") or stripped.startswith("<!--"):
+        if not stripped or stripped.startswith("#") or stripped.startswith("<!--") or stripped.startswith("---"):
             continue
-        if stripped.lower().startswith("fact:") or stripped.lower().startswith("source:"):
+        lower = stripped.lower()
+        if lower.startswith("fact:") or lower.startswith("source:") or lower.startswith("format:") or lower.startswith("topic:") or lower.startswith("facts source:"):
             continue
-        # Check for bullet points or direct speech
+        # Skip Korean lines if present
+        if any('\uac00' <= char <= '\ud7a3' for char in stripped):
+            continue
+        # Clean bullet points and stage notes
         clean = re.sub(r"^[-*]\s*", "", stripped)
-        clean = re.sub(r"\[.*?\]", "", clean) # remove bracketed stage directions like [Beat]
+        clean = re.sub(r"\[.*?\]", "", clean)
         clean = clean.replace('"', '').strip()
         if clean:
             dialogue_lines.append(clean)

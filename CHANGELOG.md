@@ -20,6 +20,16 @@
 
 ---
 
+## [v2.1.2] - 2026-11-14
+### Fixed & Improved
+- **대본만 존재하는 프로젝트에 대한 자동 스켈레톤 보충 (`shorts build`)**:
+  - `shorts script`로 대본(`SCRIPT.md`)만 먼저 생성한 경우라도, `shorts build <name>` 실행 시 누락된 씬(`story.ts`, `build.ts`, `cast.ts`, `world.ts`) 및 오디오(`timeline.py`, `cues.md`) 템플릿을 자동으로 보충하여 중단 없이 즉시 최종본 영상까지 완성되도록 파이프라인 보강.
+- **다국어/해설 혼합 대본 텍스트 파싱 고도화 (`tts.py`)**:
+  - `SCRIPT.md` 내에 `[English Narration Script]` 및 한국어 연출 해설이 공존하는 경우, 성우 나레이션에 필요한 영문 본문만 깔끔하게 선별 추출하여 Azure Neural Voice 음성을 생성하도록 정밀화.
+- **버전 동기화**: `package.json` (v2.1.2) 동기화 완료.
+
+---
+
 ## [v2.1.1] - 2026-11-14
 ### Security & Configuration
 - **API 키 파일 관리 및 Git 업로드 원천 차단 (`.env`)**:

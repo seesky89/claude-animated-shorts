@@ -136,6 +136,25 @@ switch (command) {
     }
     const proj = resolveProject(target);
     const is2k = args.includes("--2k");
+
+    // Ensure project structure exists (auto-repair if user created script only)
+    if (!fs.existsSync(path.join(proj, "scene")) || !fs.existsSync(path.join(proj, "audio"))) {
+      console.log(`[AUTO-INIT] Supplementing scene and audio template files for ${target}...`);
+      fs.mkdirSync(path.join(proj, "scene"), { recursive: true });
+      fs.mkdirSync(path.join(proj, "audio"), { recursive: true });
+      fs.mkdirSync(path.join(proj, "voice"), { recursive: true });
+      fs.mkdirSync(path.join(proj, "out"), { recursive: true });
+
+      const srcStarter = path.resolve(ROOT, "projects/bridge-1831");
+      for (const f of ["story.ts", "build.ts", "cast.ts", "world.ts"]) {
+        const dst = path.join(proj, "scene", f);
+        if (!fs.existsSync(dst)) fs.copyFileSync(path.join(srcStarter, "scene", f), dst);
+      }
+      for (const f of ["timeline.py", "cues.md"]) {
+        const dst = path.join(proj, "audio", f);
+        if (!fs.existsSync(dst)) fs.copyFileSync(path.join(srcStarter, "audio", f), dst);
+      }
+    }
     console.log(`\n=============================================================`);
     console.log(`🚀 [PIPELINE BUILD] Starting full pipeline for: ${target}`);
     console.log(`=============================================================\n`);
