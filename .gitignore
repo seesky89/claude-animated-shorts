@@ -1,0 +1,26 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build & Bundles
+.remotion/
+remotion-webpack-bundle-*
+out/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+_cache/
+*.npy
+
+# Media Artifacts
+*.wav
+*.mp4
+*.m4v
+*.mov
+!templates/
+!references/

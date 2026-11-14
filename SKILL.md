@@ -3,11 +3,12 @@ name: cartoon-3d-short
 description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion. Proven on "The Bridge That Fell for a Song" (2026-10-31). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, or says "use the cartoon short skill".
 ---
 
-# Cartoon 3D story short (three.js + Remotion)
+# Cartoon 3D story short (three.js + Remotion) — Hybrid Hub Edition
 
 Proven example: **The Bridge That Fell for a Song**. It is an original 67 s short about the 1831 Broughton bridge and 74 soldiers marching in step.
-- Code: `src/videos/bridge/` of your Remotion project (composition `BridgeShort`, 1080x1920, 30 fps).
-- Script, voice and sound: `~/bridge-short/`.
+- Hub Core (Shared node_modules & shaders): `hub/remotion/` (Root composition, Three.js shaders in `src/core/`).
+- Audio Engine (Shared DSP & synths): `hub/audio/cartoon_audio/`.
+- Projects (Only lightweight story & voice data): `projects/<name>/` (e.g. `projects/bridge/`).
 - Style research: `references/`.
 
 The style reference is a channel studied privately (`references/`: STYLE_BIBLE.md, reports/*.md, frames/).
@@ -26,7 +27,7 @@ User rules that apply:
 - Save after every step.
 - "Just do it" once the script is approved.
 
-## Pipeline
+## Pipeline (Central Hub Architecture)
 1. **Topic and facts.** Pick one surprising true story with a physical cause and effect (it should be visual), plus a simple everyday analogy that explains it.
    - Write the facts with their source at the top of `SCRIPT.md`.
 2. **Script** (~3.7 words/s, 55-70 s). Beat formula from the bridge short:
@@ -40,43 +41,36 @@ User rules that apply:
    - **Callback twist:** the ending.
    - Never describe on screen what the viewer already sees.
 3. **Voice.** Record or generate `voice.wav`, then make its word timings `words.json` (any speech-to-text with word times).
-   - Put them in the project folder, e.g. `~/bridge-short/voice/`.
+   - Put them in the project folder: `projects/<name>/voice/`.
    - Hand-fix the word timings. Everything is timed to words.json.
-4. **Shot plan** in `story.ts`: copy `templates/bridge/` (the final bridge source, same as `src/videos/bridge/` of your Remotion project) to `src/videos/<name>/`, register a new composition next to `BridgeShort` in `src/Root.tsx`, and rename it.
-   - `SHOTS`: id, a/b frames, light day/golden, crowd mode, `tau` story time.
-   - `XFADE`: crossfades at place/time changes.
-   - `FLASH_AT`: a white flash after the hook.
-   - `CAMS`: per-shot keys `{f, dur?, cut?, s: f => {pos, look, fov, roll}}`.
-   - `KICKS`: impact flip-shakes.
-   - `DOF`/`dofAt`: lens blur per beat.
-   - `FOREGROUND`: near framing props.
+4. **Shot plan & Scene setup**:
+   - Copy `templates/starter-project/` to `projects/<name>/`. No `npm install` needed! (Shared Hub in `hub/remotion/`).
+   - Register the new composition in `hub/remotion/src/Root.tsx` importing the new project's `story.ts` and `world.ts`.
+   - Set up `SHOTS`, `XFADE`, `CAMS`, `KICKS`, `DOF`/`dofAt`, `FOREGROUND`.
    - Every visual reaction lands 0-3 frames before its word.
-5. **World.**
-   - `lights.ts`: LIGHTS plus the LOOK sky/river/cloud palette per light.
-   - `shade.ts`: two-tone shading and `untone()`.
-   - `build.ts`: town, houses and Kenney CC0 kit props, recoloured, with sight-line culling of anything blocking a camera.
-   - `paint.ts`: HD Canvas2D painted textures with seams painted in as dark tints.
-   - `world.ts`: sky shader, fog = horizon colour, river, per-frame posing, sun frozen per shot and camera-relative.
-6. **Characters.**
-   - `toon.ts`: the Canvas2D `Pen` drawing API, 600x1000 design canvas, soles at y = 975, bean heads, stick limbs, plum variable-width outline, face library.
-   - `cast.ts`: camera-facing billboards, crowds, effect cards, blinks, walk cycles. All billboards go on the `NOINK` layer.
-   - `cardshade.ts`: cards lit by the scene light, no emissive.
-7. **Post** (`Bridge.tsx` + `ink.ts` + `lensblur.ts` + `grade.ts`).
-   - Composer order: ink → lens pre → lens main → bloom → NEUTRAL tone map → grade (MSAA 4).
-   - Every pixel parameter scales with output height / 1920.
-8. **Sound** (`~/bridge-short/audio/`: timeline.py, sfx_gen.py, sfx.py, music.py, instruments.py, dsp.py, mix.py).
-   - Event table → synthesized SFX plus an original score ducked under the voice.
-   - Output: mix.wav (48 kHz, exact length), stems and cues.md.
-   - Lock the picture's time constants before the sound is made. Any later timing change means re-running the sound.
-9. **Look checks.** Run `node scripts/bridge-stills.mjs out/<name>/x_ 100,400 0.5`.
-   - Set `BRIDGE_ENTRY=src/sandboxes/<n>/index.tsx` to render a sandbox copy.
-   - Make side-by-sides against reference frames with `python scripts/sbs_sheet.py out.jpg --ours ... --ref ...`.
+5. **World & Props**:
+   - `build.ts`: town, houses and Kenney CC0 kit props, recoloured.
+   - `paint.ts`: HD Canvas2D painted textures.
+   - `world.ts`: sky shader, fog = horizon colour, river, per-frame posing.
+6. **Characters**:
+   - `cast.ts`: camera-facing billboards, crowds, effect cards, blinks, walk cycles. (All billboards go on the `NOINK` layer).
+   - `core/toon.ts` (shared): Pen drawing API, bean heads, plum outline, face library.
+7. **Post Processing** (`hub/remotion/src/core/`):
+   - Shared ink outlines (`ink.ts`) -> lens blur (`lensblur.ts`) -> bloom -> tone map -> grade (`grade.ts`).
+8. **Sound**:
+   - Run the central audio mixer:
+     `python hub/audio/mix.py --project projects/<name>`
+   - Output: `projects/<name>/out/mix.wav` (48 kHz, exact length, auto-ducked), cues report in `cues.md`.
+9. **Look checks**:
+   - Run stills from the hub: `node hub/remotion/scripts/stills.mjs <CompId> projects/<name>/out/x_ 100,400 0.5`.
+   - Make side-by-sides against reference frames with `python templates/scripts/sbs_sheet.py ...`.
    - Send them to an Opus max verifier: 1-3 images, a ≤200-word verdict.
-10. **Final render.**
-    - `npx remotion render src/index.ts <Comp> out/<name>/video.mp4 --codec h264 --crf 16 --scale 1.3333`
-    - Mux with `-map 0:v:0 -map 1:a:0` (Remotion writes a silent audio track).
-    - QA: `python scripts/short_qa.py final.mp4 out/<name>/qa shots.json` checks every frame for black, white, frozen and pop frames, plus loudness and sheets.
-    - Fix anything it finds, then run a deep Opus audit.
+10. **Final render**:
+    - Render from the hub:
+      `node hub/remotion/scripts/render.mjs <CompId> projects/<name>/out/video.mp4 --scale 1.3333`
+    - Mux video and audio:
+      `ffmpeg -i projects/<name>/out/video.mp4 -i projects/<name>/out/mix.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 320k projects/<name>/out/final.mp4`
+    - QA: `python templates/scripts/short_qa.py projects/<name>/out/final.mp4 projects/<name>/out/qa shots.json`.
 11. **Deliver.** SendUserFile the final mp4, update memory, write notes.
 
 ## Final look values (bridge after 4 verifier rounds; all in `templates/bridge/`)
