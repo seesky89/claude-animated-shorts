@@ -19,6 +19,18 @@
 
 ---
 
+## [v1.1.4] - 2026-11-14
+### Added & Improved (세션 시작 가이드 및 생명주기 훅 보강)
+- **Antigravity 세션 시작 훅 추가 (`.agents/hooks.json`, `.agents/session_start.py`)**:
+  - `SessionStart` 생명주기 이벤트를 등록하여, 새 대화 세션 생성 시 시스템 메시지로 프로젝트 가이드 및 2가지 작업 모드를 AI 컨텍스트에 자동 주입(`injectSteps`).
+- **Antigravity 전용 규칙 파일 동기화 (`GEMINI.md`)**:
+  - Antigravity 네이티브 지원을 위해 `GEMINI.md`를 신규 생성하고 `AGENTS.md`와 동기화.
+- **첫 턴 안내 지침 절대 강제화 (`AGENTS.md`, `GEMINI.md`)**:
+  - `First Greeting Rule`을 최우선 순위로 격상하여 세션 시작 첫 턴에서 사용자의 질문 내용과 무관하게 2가지 모드(원스톱 전자동 완성 vs 대본 컨펌) 사용법을 반드시 선제 안내하도록 명시.
+- **버전 동기화**: `hub/remotion/package.json` (v1.1.4) 동기화 완료.
+
+---
+
 ## [v1.1.3] - 2026-11-14
 ### Documentation & Agent Guidance
 - **에이전트 첫 시작 사용 설명법 자동 안내 규칙 추가 (`AGENTS.md`)**:

@@ -1,0 +1,10 @@
+{
+  "session-welcome": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python session_start.py"
+      }
+    ]
+  }
+}
