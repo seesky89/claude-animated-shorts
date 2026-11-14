@@ -36,32 +36,39 @@ npm link
 
 ---
 
-## 🎬 6단계 쇼츠 제작 워크플로우
+## 🎬 쇼츠 제작 워크플로우
+
+### 🌟 초간단 방법: 주제만 던지면 대본부터 렌더링까지 전자동 완성 (추천!)
+```bash
+# Gemini, OpenAI, Claude 중 하나의 API 키가 설정되어 있으면 AI가 Style Bible 공식에 맞춰 대본까지 완벽 작성합니다.
+export GEMINI_API_KEY="your-api-key"   # 또는 OPENAI_API_KEY / ANTHROPIC_API_KEY
+
+shorts create my-titanic-story --topic "타이타닉 침몰 원인 중 연철 리벳의 결함 이야기" --2k
+```
+- **프로젝트 생성** ➡️ **대본 AI 작성** ➡️ **음성(TTS) 합성** ➡️ **단어 타임스탬프(STT)** ➡️ **BGM Ducking 믹스** ➡️ **2K 3D 렌더링**이 한 번에 끝납니다!
+
+---
+
+### 단계별 커스텀 제작 방법 (필요 시)
 
 ```mermaid
 flowchart LR
-    A[1. shorts new] --> B[2. SCRIPT.md 대본 작성]
+    A[1. shorts new] --> B[2. SCRIPT.md 대본 작성 or shorts script]
     B --> C[3. shorts voice]
     C --> D[4. shorts audio]
     D --> E[5. shorts preview]
     E --> F[6. shorts render]
 ```
 
-### Step 1. 새 쇼츠 프로젝트 생성
+#### Step 1. 새 프로젝트 생성
 ```bash
-shorts new my-first-short
+shorts new my-story
 ```
-- `projects/my-first-short/` 디렉토리가 생성됩니다.
-- **용량 절감**: `node_modules` 중복 없이 약 **50 KB**의 경량 프로젝트로 초기화됩니다.
 
-### Step 2. 대본 작성
-`projects/my-first-short/SCRIPT.md` 파일을 열고 대본을 작성합니다.
-```markdown
-# Topic: [역사적 사실이나 흥미로운 과학 주제]
-<!-- 훅 -> 배경 -> 에스컬레이션 -> 스냅 -> 반전 -> 결말 구조 -->
-
-Seventy-four soldiers knocked down an iron bridge just by walking across it.
-In 1831, the 60th Rifles were marching back to barracks in Salford...
+#### Step 2. 대본 생성 (AI 자동 작성 또는 수동 작성)
+```bash
+# AI로 대본 자동 작성
+shorts script my-story --topic "74명의 군인이 발맞춰 걷다가 무너진 1831년 브로턴 다리"
 ```
 
 ### Step 3. 음성(TTS) 및 단어 타임스탬프(STT) 자동 생성

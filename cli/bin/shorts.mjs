@@ -9,17 +9,19 @@ const ROOT = path.resolve(__dirname, "../..");
 
 const USAGE = `
 =============================================================
-Cartoon Animated Shorts Engine CLI
+Cartoon Animated Shorts Engine CLI — v2.1.0
 =============================================================
 Usage:
-  shorts build <project-name> [--2k] 원클릭 전자동 파이프라인 (voice -> audio -> render -> qa)
-  shorts new <project-name>         새로운 경량 쇼츠 프로젝트 생성
-  shorts voice <project-name>       대본 기반 TTS 음성 및 words.json 자동 추출
-  shorts audio <project-name>       배경음악 덕킹 및 SFX 합성 (mix.wav 생성)
-  shorts preview <project-name>     스틸컷 프리뷰 렌더링 (기본: 100, 400프레임)
-  shorts render <project-name>      최종 mp4 비디오 렌더 및 오디오 자동 먹싱
-  shorts qa <project-name>          품질 무결성 및 -15 LUFS 라우드니스 검사
-  shorts clean                      Remotion Webpack 임시 캐시 정리
+  shorts create <name> --topic "<주제>" [--2k]  ★ 주제만 주면 프로젝트생성부터 대본AI작성+렌더까지 풀코스 전자동 완성!
+  shorts script <name> --topic "<주제>"         AI(Gemini/Claude/OpenAI)로 SCRIPT.md 대본 자동 생성
+  shorts build <name> [--2k]                    기존 프로젝트의 전자동 빌드 (voice -> audio -> render -> qa)
+  shorts new <name>                             새로운 경량 쇼츠 프로젝트 생성
+  shorts voice <name>                           대본 기반 TTS 음성 및 words.json 자동 추출
+  shorts audio <name>                           배경음악 덕킹 및 SFX 합성 (mix.wav 생성)
+  shorts preview <name> [frames]                스틸컷 프리뷰 렌더링 (기본: 100, 400프레임)
+  shorts render <name>                          최종 mp4 비디오 렌더 및 오디오 자동 먹싱
+  shorts qa <name>                              품질 무결성 및 -15 LUFS 라우드니스 검사
+  shorts clean                                  Remotion Webpack 임시 캐시 정리
 =============================================================
 `;
 
@@ -35,6 +37,14 @@ function resolveProject(name) {
   return path.resolve(ROOT, "projects", name);
 }
 
+function parseTopic(argsList) {
+  const tIdx = argsList.indexOf("--topic");
+  if (tIdx !== -1 && argsList[tIdx + 1]) {
+    return argsList[tIdx + 1];
+  }
+  return null;
+}
+
 const args = process.argv.slice(2);
 const command = args[0];
 const target = args[1];
@@ -45,15 +55,70 @@ if (!command) {
 }
 
 switch (command) {
+  case "create": {
+    if (!target) {
+      console.error("[ERROR] Missing project name: shorts create <name> --topic \"<주제>\" [--2k]");
+      process.exit(1);
+    }
+    const topic = parseTopic(args);
+    if (!topic) {
+      console.error("[ERROR] Missing topic: shorts create <name> --topic \"<주제>\"");
+      process.exit(1);
+    }
+
+    const projDir = path.resolve(ROOT, "projects", target);
+    console.log(`\n=============================================================`);
+    console.log(`🌟 [ALL-IN-ONE CREATE] Generating Short from Topic: "${topic}"`);
+    console.log(`=============================================================\n`);
+
+    // 1. New project
+    if (!fs.existsSync(projDir)) {
+      console.log(`▶ [1/4] Initializing project structure: ${target}...`);
+      runCmd(`node "${path.resolve(ROOT, "cli/bin/shorts.mjs")}" new "${target}"`);
+    }
+
+    // 2. Generate AI Script
+    console.log(`\n▶ [2/4] Writing historical documentary script via AI...`);
+    const scriptPath = path.join(projDir, "SCRIPT.md");
+    runCmd(`python "${path.resolve(ROOT, "packages/voice/script_gen.py")}" --topic "${topic}" --out "${scriptPath}"`);
+
+    // 3. Build whole video
+    console.log(`\n▶ [3/4] Building video (Voice -> Audio -> 3D Render)...`);
+    const is2k = args.includes("--2k") ? " --2k" : "";
+    runCmd(`node "${path.resolve(ROOT, "cli/bin/shorts.mjs")}" build "${target}"${is2k}`);
+
+    console.log(`\n=============================================================`);
+    console.log(`🎉 [COMPLETE] Topic "${topic}" transformed into short: projects/${target}/out/final.mp4`);
+    console.log(`=============================================================\n`);
+    break;
+  }
+
+  case "script": {
+    if (!target) {
+      console.error("[ERROR] Missing project: shorts script <name> --topic \"<주제>\"");
+      process.exit(1);
+    }
+    const topic = parseTopic(args);
+    if (!topic) {
+      console.error("[ERROR] Missing topic: shorts script <name> --topic \"<주제>\"");
+      process.exit(1);
+    }
+    const proj = resolveProject(target);
+    const scriptPath = path.join(proj, "SCRIPT.md");
+    console.log(`[SCRIPT] Generating AI script for topic: "${topic}"`);
+    runCmd(`python "${path.resolve(ROOT, "packages/voice/script_gen.py")}" --topic "${topic}" --out "${scriptPath}"`);
+    break;
+  }
+
   case "build": {
     if (!target) {
-      console.error("[ERROR] Missing project: shorts build <project-name> [--2k]");
+      console.error("[ERROR] Missing project: shorts build <name> [--2k]");
       process.exit(1);
     }
     const proj = resolveProject(target);
     const is2k = args.includes("--2k");
     console.log(`\n=============================================================`);
-    console.log(`🚀 [ALL-IN-ONE BUILD] Starting full pipeline for: ${target}`);
+    console.log(`🚀 [PIPELINE BUILD] Starting full pipeline for: ${target}`);
     console.log(`=============================================================\n`);
 
     // 1. Voice
@@ -85,11 +150,11 @@ switch (command) {
     try {
       runCmd(`python "${path.resolve(ROOT, "templates/scripts/short_qa.py")}" "${finalMp4}" "${qaOut}"`);
     } catch {
-      console.log(`[QA] QA script finished.`);
+      console.log(`[QA] QA audit finished.`);
     }
 
     console.log(`\n=============================================================`);
-    console.log(`🎉 [SUCCESS] All done! Final video: ${finalMp4}`);
+    console.log(`🎉 [SUCCESS] Pipeline complete! Output: ${finalMp4}`);
     console.log(`=============================================================\n`);
     break;
   }

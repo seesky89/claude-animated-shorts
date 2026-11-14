@@ -20,6 +20,15 @@
 
 ---
 
+## [v2.1.0] - 2026-11-14
+### Added
+- **AI 대본 자동 생성 기능 내장 (`shorts script`, `shorts create`)**:
+  - `packages/voice/script_gen.py`를 통해 Google Gemini, OpenAI, Claude, 또는 로컬 Ollama API와 연동하여 55~70초 Style Bible 공식(Hook, Setting, Escalation, Snap, Consequence, Callback)에 맞춘 `SCRIPT.md` 대본을 LLM이 자동 작성하도록 구현.
+  - `shorts create <name> --topic "<주제>" [--2k]`: 주제 하나만 전달하면 프로젝트 생성 -> 대본 AI 자동 작성 -> 음성 합성 -> BGM Ducking 사운드 믹스 -> 3D 렌더링 -> 2K 최종 비디오 출력까지 100% 원클릭으로 완성하는 풀코스 파이프라인 탑재.
+- **버전 동기화**: `package.json` (v2.1.0) 동기화 완료.
+
+---
+
 ## [v2.0.2] - 2026-11-14
 ### Added
 - **원클릭 전자동 빌드 명령어 (`shorts build`) 추가**:
