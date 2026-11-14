@@ -1,8 +1,23 @@
-# Claude Animated Shorts
+# Claude Animated Shorts (Hybrid Hub)
 
-The free Claude skill from the video **"How to Make Viral Animated Shorts Using Claude (Full Workflow)"**.
+The free Claude skill & hybrid framework from the video **"How to Make Viral Animated Shorts Using Claude (Full Workflow)"**.
 
 It makes 55-70 s vertical animated story shorts: 2D characters in a colourful 3D world, with ink outlines, a painted town, lens blur, gliding cameras, a march score and sound effects. Everything is rendered with three.js inside Remotion on your own PC, with no AI video generator.
+
+---
+
+## 🎬 쇼츠 제작 요청 가이드 (자연어 대화형)
+Antigravity 에이전트와 대화할 때 주제만 전달하시면 아래 2가지 방식 중 원하는 형태로 진행됩니다:
+
+1. 🚀 **원스톱 전자동 완성 모드**:
+   > *"타이타닉 악단 이야기로 쇼츠 최종본까지 한 번에 만들어줘."*
+   - 대본 작성 ➡️ 성우 음성 합성 ➡️ 자막 동기화 ➡️ BGM Ducking 믹스 ➡️ Three.js 3D 렌더링 ➡️ 최종 `final.mp4`까지 전자동 완성.
+
+2. ✍️ **대본 컨펌 모드**:
+   > *"폼페이 최후의 날로 대본 먼저 써줘."*
+   - 대본(`SCRIPT.md`)을 먼저 확인 및 검토한 후 최종 영상 렌더링 진행.
+
+---
 
 Proven on **The Bridge That Fell for a Song**, a 67 s short about the 1831 Broughton bridge.
 
