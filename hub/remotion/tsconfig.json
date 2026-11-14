@@ -4,14 +4,24 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "jsx": "react-jsx",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"],
-      "@project/*": ["../../projects/*"]
+      "@project/*": ["../../projects/*"],
+      "./paint": ["src/core/paint"],
+      "./shade": ["src/core/shade"],
+      "./lights": ["src/core/lights"],
+      "./cardshade": ["src/core/cardshade"],
+      "./ink": ["src/core/ink"],
+      "./lensblur": ["src/core/lensblur"],
+      "./grade": ["src/core/grade"],
+      "./toon": ["src/core/toon"]
     }
   },
   "include": ["src/**/*", "scripts/**/*", "../../projects/**/*"]

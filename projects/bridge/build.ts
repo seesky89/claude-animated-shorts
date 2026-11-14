@@ -4,8 +4,8 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { D0 } from "./story";
-import { brick, rng, ctex, rep, facadeHD, roofHD, stoneHD } from "./paint";
-import { twoTone } from "./shade";
+import { brick, rng, ctex, rep, facadeHD, roofHD, stoneHD } from "@core/paint";
+import { twoTone } from "@core/shade";
 
 export type Kit = Record<string, THREE.Object3D>;
 export const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);

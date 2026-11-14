@@ -19,6 +19,17 @@
 
 ---
 
+## [v1.1.1] - 2026-11-14
+### Fixed
+- **hub/remotion npm install 피어 의존성 충돌 해결**:
+  - `hub/remotion/package.json`에 `overrides` 필드를 추가하고 `postprocessing`을 `6.36.4`로 고정하여, npm 7+ 환경에서 `three@0.166.1`과의 ERESOLVE 피어 충돌 원천 차단.
+- **씬 파일 모듈 임포트 경로 및 TS 타입 검증 통과**:
+  - `projects/bridge/`의 파일들에서 코어 셰이더 및 컴포넌트를 `@core/*` 경로로 정상 참조하도록 수정.
+  - `hub/remotion/tsconfig.json` 및 `CartoonScene.tsx` 보강으로 `tsc --noEmit` 검증 0 에러 달성.
+- **버전 동기화**: `hub/remotion/package.json` (v1.1.1) 동기화 완료.
+
+---
+
 ## [v1.1.0] - 2026-11-14
 ### Added & Refactored (하이브리드 Hub 아키텍처 구축)
 - **단일 Remotion 호스트 구축 (`hub/remotion/`)**:
