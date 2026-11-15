@@ -1,6 +1,6 @@
 ---
-name: cartoon-3d-short
-description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion. Proven on "The Bridge That Fell for a Song" (2026-10-31). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, or says "use the cartoon short skill".
+name: cartoon-3d-short-shared
+description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style using a shared Remotion + Three.js + Audio runtime (no per-short node_modules or duplicated engine code). Use when the user asks for a cartoon 3D short, "cartoon-3d-short-shared", "공유 런타임 쇼츠", or a history/science story short in the bridge style.
 ---
 
 # Cartoon 3D story short (three.js + Remotion)
