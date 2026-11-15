@@ -19,6 +19,25 @@
 
 ---
 
+## [v1.1.6] - 2026-11-14
+### Added (신규 쇼츠 프로젝트: 니콜라 테슬라 - 무선 전력과 지진 기계)
+- **신규 쇼츠 프로젝트 생성 (`projects/tesla/`)**:
+  - 발명가 '니콜라 테슬라'의 1898년 맨해튼 지진 기계 실화와 1901년 전 지구 무선 전력 전송 타워(워든클리프)의 야망을 다룬 과학 미스터리 쇼츠 제작.
+- **고음질 성우 내레이션 & 단어 단위 자막 동기화 (`projects/tesla/voice/`)**:
+  - `ko-KR-InJoonNeural` 보이스 기반 다큐멘터리 톤의 한국어 음성(`voice.wav`, 48 kHz PCM, 81.5초) 생성.
+  - VTT 기반 110개 단어 단위 정확한 타임스탬프(`words.json`) 추출 및 동기화.
+- **오디오 DSP 및 타임라인 구축 (`projects/tesla/audio/`)**:
+  - 15개 샷(총 2,445 프레임)과 연동된 `timeline.py` 구축.
+  - 중앙 오디오 믹서(`hub/audio/mix.py`) 연동으로 통합 라우드니스 **-15.05 LUFS**, 피크 **-0.43 dBTP** 규격 완벽 적중.
+- **테슬라 전용 Three.js 3D 씬 및 캐릭터 전면 제작 (`projects/tesla/cast.ts`, `story.ts`)**:
+  - 니콜라 테슬라(Nikola Tesla), J.P. 모건(J.P. Morgan), 뉴욕 경찰 캐릭터 전용 제작.
+  - 57미터 워든클리프 탑(Wardenclyffe Tower) 및 고전압 번개 아크 방전 이펙트 구현.
+  - 포켓 사이즈 지진 진동기(Oscillator) 및 진동 충격파 펄스 이펙트 구현.
+  - 15개 샷 전체에 걸친 글라이딩 카메라 및 지진 진동(Camera Shake) 연출.
+- **버전 동기화**: `hub/remotion/package.json` (v1.1.6) 동기화 완료.
+
+---
+
 ## [v1.1.5] - 2026-11-14
 ### Added & Changed (스리니바사 라마누잔 프로젝트 및 Git 관리 최적화)
 - **개별 프로젝트 디렉토리 Git 추적 제외 (`.gitignore`)**:
