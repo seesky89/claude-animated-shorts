@@ -29,9 +29,12 @@
 ---
 
 ## 🏷️ 2. 버전 관리 규칙 (Versioning & CHANGELOG Convention)
+- **스킬 실행 산출물(Shorts) 히스토리 기록 제외 (중요)**:
+  - 스킬(`cartoon-3d-short-shared`)을 사용하여 생성한 개별 쇼츠 프로젝트(`shorts/<name>/`) 및 비디오/오디오 산출물 작업은 `CHANGELOG.md` 및 프로젝트 버전에 기록하지 않는다.
+  - 버전 갱신 및 `CHANGELOG.md` 기록은 오직 **공통 런타임(`runtime/`), 3D/셰이더 코어 엔진(`@core/*`), 오디오 DSP 엔진, 렌더/믹스 스크립트, 프로젝트 설정 및 문서** 등 공유 시스템이 변경·추가·수정될 때만 수행한다.
 - **Semantic Versioning 준수**:
   - 버전 포맷: `[vMajor.Minor.Patch] - YYYY-MM-DD`
-  - 기능 추가, 수정, 리팩토링, 문서 변경 등 의미 있는 작업이 완료될 때마다 `patch` 번호를 1씩 증가시킨다. (예: `v1.0.2` ➡️ `v1.0.3`)
+  - 공통 시스템의 기능 추가, 수정, 리팩토링, 문서 변경 등 의미 있는 작업이 완료될 때마다 `patch` 번호를 1씩 증가시킨다. (예: `v1.0.3` ➡️ `v1.0.4`)
   - `patch`가 99에 도달하면 `minor`를 1 올리고 `patch`를 0으로 리셋한다.
 - **버전 동기화 (Essential)**:
   - `CHANGELOG.md`의 버전 갱신 시 `runtime/remotion/package.json`의 `"version"` 값도 항상 일치시킨다.

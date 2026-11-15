@@ -23,7 +23,7 @@ if (!projectRel) {
 }
 
 const is2k = process.argv.includes("--2k");
-const scale = Number(arg("--scale", is2k ? "1.3333" : "1"));
+const scale = Number(arg("--scale", is2k ? 4 / 3 : 1));
 const projectAbs = path.resolve(repoRoot, projectRel);
 const outDir = path.join(projectAbs, "out");
 fs.mkdirSync(outDir, { recursive: true });
