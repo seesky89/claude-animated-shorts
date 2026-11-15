@@ -18,6 +18,17 @@
 
 ---
 
+## [v1.0.3] - 2026-11-15
+### Changed & Fixed (.gitignore 스킬 런타임 생성 폴더 및 임시 산출물 제외 강화)
+- **`shorts/` 생성 디렉터리 Git 추적 제외**:
+  - 스킬(`cartoon-3d-short-shared`) 실행 및 `init_short.py` 시 자동 생성되는 `shorts/` 폴더 및 개별 쇼츠 하위 프로젝트 전체를 `.gitignore`에 등록하여 Git 업로드를 원천 차단했습니다.
+- **임시 번들 및 렌더 산출물 제외 보강**:
+  - Webpack 임시 번들(`remotion-webpack-bundle-*`), 전역 비디오 산출물(`*.mp4`, `*.webm`), 파이프라인 캐시(`**/_cache/`), Python 바이트코드(`*.pyo`) 및 OS 아티팩트 패턴을 `.gitignore`에 추가했습니다.
+- **버전 동기화**:
+  - `runtime/remotion/package.json` 버전을 `v1.0.3`으로 동기화했습니다.
+
+---
+
 ## [v1.0.2] - 2026-11-15
 ### Added & Updated (버전 관리 및 Git 커밋 규칙 도입)
 - **`CHANGELOG.md` 및 Semantic Versioning 체계 도입**:

@@ -2,19 +2,32 @@
 runtime/remotion/node_modules/
 runtime/remotion/dist/
 remotion-tmp/
+remotion-webpack-bundle-*
 **/__pycache__/
 *.pyc
+*.pyo
 
-# Per-short generated media & caches
+# Skill runtime generated short projects & folders
+shorts/
+
+# Per-short generated media, renders & caches
 shorts/*/out/
 shorts/*/audio/_cache/
 shorts/*/audio/*.wav
 shorts/*/voice/*.wav
+**/_cache/
+*.mp4
+*.webm
 
 # Environment / secrets
 .env
 .env.*
 *.env
+
+# OS & Editor artifacts
+.DS_Store
+Thumbs.db
+*.tmp
 
 # Pre-existing local workspace folders (preserved untouched)
 /hub/

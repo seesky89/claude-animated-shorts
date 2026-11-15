@@ -1,6 +1,6 @@
 {
   "name": "cartoon-3d-short-runtime",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit",
