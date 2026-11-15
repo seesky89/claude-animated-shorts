@@ -59,6 +59,7 @@ const chromiumOptions = {
     "--ignore-gpu-blocklist",
     "--enable-gpu-rasterization",
     "--enable-zero-copy",
+    "--js-flags=--max-old-space-size=8192",
   ],
 };
 

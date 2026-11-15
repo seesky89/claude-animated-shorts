@@ -16,6 +16,14 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition
+        id="RamanujanShort"
+        component={CartoonScene}
+        durationInFrames={TOTAL || 2010}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
     </>
   );
 };
