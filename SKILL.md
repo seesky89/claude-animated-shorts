@@ -7,7 +7,7 @@ description: Make a ~55-70 s vertical cartoon story short in the "2D characters 
 
 Proven example: **The Bridge That Fell for a Song**. It is an original 67 s short about the 1831 Broughton bridge and 74 soldiers marching in step.
 - Shared runtime (install **once**, reused by all shorts): `runtime/remotion/` (`node_modules`, `src/core/`, `public/`), `runtime/audio/`, `runtime/scripts/`.
-- Per-short workspace (lightweight, ~100 KB of code): `shorts/<name>/` (`SCRIPT.md`, `voice/`, `scene/`, `audio/timeline.py`, `out/`).
+- Per-short workspace (lightweight, ~100 KB of code): `shorts/<name>/` (`SCRIPT.md`, `METADATA.md`, `voice/`, `scene/`, `audio/timeline.py`, `out/`).
 - Style research: `references/`.
 
 ## First-time setup (shared runtime, run once)
@@ -33,8 +33,9 @@ User rules that apply:
 - "Just do it" once the script is approved.
 
 ## Pipeline
-1. **Topic and facts.** Pick one surprising true story with a physical cause and effect (it should be visual), plus a simple everyday analogy that explains it.
+1. **Topic, facts, and YouTube metadata plan.** Pick one surprising true story with a physical cause and effect (it should be visual), plus a simple everyday analogy that explains it.
    - Write the facts with their source at the top of `SCRIPT.md`.
+   - Prepare the YouTube Shorts concept in `shorts/<name>/METADATA.md` (Title candidates, description hook, resonance/physics takeaway).
 2. **Script** (~3.7 words/s, 55-70 s). Beat formula from the bridge short:
    - **Hook:** the absurd fact in one line ("Seventy-four soldiers knocked down an iron bridge just by walking across it.").
    - **Setting:** year, place, pride.
@@ -84,7 +85,13 @@ User rules that apply:
     - `node runtime/scripts/render.mjs --project shorts/<name> --2k` (renders `video.mp4` at 1440x2560 `--scale 1.3333` and auto-muxes `audio/mix.wav` into `out/final.mp4` with `-map 0:v:0 -map 1:a:0`, cleaning up temp bundles automatically).
     - QA: `python runtime/scripts/short_qa.py shorts/<name>/out/final.mp4 shorts/<name>/out/qa shots.json` checks every frame for black, white, frozen and pop frames, plus loudness and sheets.
     - Fix anything it finds, then run a deep Opus audit.
-11. **Deliver.** SendUserFile the final mp4, update memory, write notes.
+11. **Deliver & YouTube Shorts Metadata.**
+    - SendUserFile the final mp4 (`shorts/<name>/out/final.mp4`), update memory, write notes.
+    - **YouTube Shorts Upload Kit**: Write and finalize `shorts/<name>/METADATA.md`, and **always include the YouTube metadata directly in the final response to the user** for one-click copy-paste:
+      - **Titles (3 options)**: High-CTR hook title (with `#Shorts`), narrative title, and English title.
+      - **Description**: Engaging 3-line summary, educational/scientific takeaway, references/sources, and rich hashtags (`#Shorts`, `#과학`, `#역사`, `#애니메이션`, etc.).
+      - **Pinned Comment**: Viewer engagement question to drive comments and algorithm momentum.
+      - **Tags**: Comma-separated keyword list ready for YouTube Studio.
 
 ## Final look values (bridge after 4 verifier rounds; all in `templates/bridge/`)
 Start every new short from `templates/bridge/` (copy to `src/videos/<name>/`): the look lives in these values, the

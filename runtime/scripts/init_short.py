@@ -38,14 +38,16 @@ def init_short(name: str, force: bool = False) -> str:
         with open(dst, "w", encoding="utf-8") as fp:
             fp.write(content)
 
-    # Copy only timeline.py (audio engine lives in runtime/audio/)
+    # Copy timeline.py (audio engine lives in runtime/audio/) and templates
     shutil.copy2(os.path.join(TEMPLATES_DIR, "audio", "timeline.py"), os.path.join(audio_dir, "timeline.py"))
     shutil.copy2(os.path.join(TEMPLATES_DIR, "SCRIPT_example.md"), os.path.join(short_dir, "SCRIPT.md"))
+    shutil.copy2(os.path.join(TEMPLATES_DIR, "METADATA_example.md"), os.path.join(short_dir, "METADATA.md"))
 
     print(f"[init_short] Created lightweight short at: shorts/{name}")
     print("  - scene/{story,build,cast,world}.ts (imports @core/*)")
     print("  - audio/timeline.py (uses shared runtime/audio/mix.py)")
     print("  - voice/ (place voice.wav and words.json here)")
+    print("  - SCRIPT.md & METADATA.md (script + YouTube Shorts title & description)")
     print("  - out/ (stills and renders go here)")
     return short_dir
 

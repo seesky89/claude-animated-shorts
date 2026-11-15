@@ -13,3 +13,4 @@ Key rules:
 - Render stills with `node runtime/scripts/stills.mjs --project shorts/<name> ...`.
 - Mix audio with `python runtime/audio/mix.py --project shorts/<name> --clean-cache`.
 - Render final 2K video with `node runtime/scripts/render.mjs --project shorts/<name> --2k`.
+- Always generate and provide YouTube Shorts metadata (`shorts/<name>/METADATA.md` — Title options, Description, Hashtags, Pinned Comment, Tags) with the final deliverable.
