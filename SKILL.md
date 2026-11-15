@@ -6,9 +6,15 @@ description: Make a ~55-70 s vertical cartoon story short in the "2D characters 
 # Cartoon 3D story short (three.js + Remotion)
 
 Proven example: **The Bridge That Fell for a Song**. It is an original 67 s short about the 1831 Broughton bridge and 74 soldiers marching in step.
-- Code: `src/videos/bridge/` of your Remotion project (composition `BridgeShort`, 1080x1920, 30 fps).
-- Script, voice and sound: `~/bridge-short/`.
+- Shared runtime (install **once**, reused by all shorts): `runtime/remotion/` (`node_modules`, `src/core/`, `public/`), `runtime/audio/`, `runtime/scripts/`.
+- Per-short workspace (lightweight, ~100 KB of code): `shorts/<name>/` (`SCRIPT.md`, `voice/`, `scene/`, `audio/timeline.py`, `out/`).
 - Style research: `references/`.
+
+## First-time setup (shared runtime, run once)
+Check if `runtime/remotion/node_modules/` exists. If not, install it **once** — never create per-short `node_modules`:
+```bash
+cd runtime/remotion && npm install
+```
 
 The style reference is a channel studied privately (`references/`: STYLE_BIBLE.md, reports/*.md, frames/).
 - Those videos are private study material. Never upload, publish or send them.
@@ -40,9 +46,11 @@ User rules that apply:
    - **Callback twist:** the ending.
    - Never describe on screen what the viewer already sees.
 3. **Voice.** Record or generate `voice.wav`, then make its word timings `words.json` (any speech-to-text with word times).
-   - Put them in the project folder, e.g. `~/bridge-short/voice/`.
+   - Put them in `shorts/<name>/voice/`.
    - Hand-fix the word timings. Everything is timed to words.json.
-4. **Shot plan** in `story.ts`: copy `templates/bridge/` (the final bridge source, same as `src/videos/bridge/` of your Remotion project) to `src/videos/<name>/`, register a new composition next to `BridgeShort` in `src/Root.tsx`, and rename it.
+4. **Shot plan** in `shorts/<name>/scene/story.ts`:
+   - Scaffold a lightweight short with `python runtime/scripts/init_short.py <name>`.
+   - This creates `shorts/<name>/scene/{story.ts,build.ts,cast.ts,world.ts}` importing `@core/*` (no `node_modules` or shader copies).
    - `SHOTS`: id, a/b frames, light day/golden, crowd mode, `tau` story time.
    - `XFADE`: crossfades at place/time changes.
    - `FLASH_AT`: a white flash after the hook.
@@ -51,31 +59,30 @@ User rules that apply:
    - `DOF`/`dofAt`: lens blur per beat.
    - `FOREGROUND`: near framing props.
    - Every visual reaction lands 0-3 frames before its word.
-5. **World.**
-   - `lights.ts`: LIGHTS plus the LOOK sky/river/cloud palette per light.
-   - `shade.ts`: two-tone shading and `untone()`.
-   - `build.ts`: town, houses and Kenney CC0 kit props, recoloured, with sight-line culling of anything blocking a camera.
-   - `paint.ts`: HD Canvas2D painted textures with seams painted in as dark tints.
+5. **World** (`shorts/<name>/scene/`):
+   - `@core/lights`: LIGHTS plus the LOOK sky/river/cloud palette per light (shared).
+   - `@core/shade`: two-tone shading and `untone()` (shared).
+   - `build.ts`: town, houses and Kenney CC0 kit props (from shared `runtime/remotion/public/`), recoloured, with sight-line culling of anything blocking a camera.
+   - `@core/paint`: HD Canvas2D painted textures with seams painted in as dark tints (shared).
    - `world.ts`: sky shader, fog = horizon colour, river, per-frame posing, sun frozen per shot and camera-relative.
-6. **Characters.**
-   - `toon.ts`: the Canvas2D `Pen` drawing API, 600x1000 design canvas, soles at y = 975, bean heads, stick limbs, plum variable-width outline, face library.
+6. **Characters** (`@core/toon`, `@core/cardshade`, `shorts/<name>/scene/cast.ts`):
+   - `@core/toon`: the Canvas2D `Pen` drawing API, 600x1000 design canvas, soles at y = 975, bean heads, stick limbs, plum variable-width outline, face library (shared).
    - `cast.ts`: camera-facing billboards, crowds, effect cards, blinks, walk cycles. All billboards go on the `NOINK` layer.
-   - `cardshade.ts`: cards lit by the scene light, no emissive.
-7. **Post** (`Bridge.tsx` + `ink.ts` + `lensblur.ts` + `grade.ts`).
+   - `@core/cardshade`: cards lit by the scene light, no emissive (shared).
+7. **Post** (`runtime/remotion/src/ShortComposition.tsx` + `@core/ink` + `@core/lensblur` + `@core/grade`):
    - Composer order: ink → lens pre → lens main → bloom → NEUTRAL tone map → grade (MSAA 4).
    - Every pixel parameter scales with output height / 1920.
-8. **Sound** (`~/bridge-short/audio/`: timeline.py, sfx_gen.py, sfx.py, music.py, instruments.py, dsp.py, mix.py).
-   - Event table → synthesized SFX plus an original score ducked under the voice.
-   - Output: mix.wav (48 kHz, exact length), stems and cues.md.
+8. **Sound** (`shorts/<name>/audio/timeline.py` + shared `runtime/audio/`):
+   - Edit `shorts/<name>/audio/timeline.py`, then run `python runtime/audio/mix.py --project shorts/<name> --clean-cache`.
+   - Output: `shorts/<name>/audio/mix.wav` (48 kHz, exact length), stems and `cues.md`.
    - Lock the picture's time constants before the sound is made. Any later timing change means re-running the sound.
-9. **Look checks.** Run `node scripts/bridge-stills.mjs out/<name>/x_ 100,400 0.5`.
-   - Set `BRIDGE_ENTRY=src/sandboxes/<n>/index.tsx` to render a sandbox copy.
-   - Make side-by-sides against reference frames with `python scripts/sbs_sheet.py out.jpg --ours ... --ref ...`.
+9. **Look checks.** Run `node runtime/scripts/stills.mjs --project shorts/<name> --frames 100,400 --scale 0.5`.
+   - Temp bundles (`remotion-webpack-bundle-*`) are automatically deleted in `finally` after rendering.
+   - Make side-by-sides against reference frames with `python runtime/scripts/sbs_sheet.py out.jpg --ours ... --ref ...`.
    - Send them to an Opus max verifier: 1-3 images, a ≤200-word verdict.
 10. **Final render.**
-    - `npx remotion render src/index.ts <Comp> out/<name>/video.mp4 --codec h264 --crf 16 --scale 1.3333`
-    - Mux with `-map 0:v:0 -map 1:a:0` (Remotion writes a silent audio track).
-    - QA: `python scripts/short_qa.py final.mp4 out/<name>/qa shots.json` checks every frame for black, white, frozen and pop frames, plus loudness and sheets.
+    - `node runtime/scripts/render.mjs --project shorts/<name> --2k` (renders `video.mp4` at 1440x2560 `--scale 1.3333` and auto-muxes `audio/mix.wav` into `out/final.mp4` with `-map 0:v:0 -map 1:a:0`, cleaning up temp bundles automatically).
+    - QA: `python runtime/scripts/short_qa.py shorts/<name>/out/final.mp4 shorts/<name>/out/qa shots.json` checks every frame for black, white, frozen and pop frames, plus loudness and sheets.
     - Fix anything it finds, then run a deep Opus audit.
 11. **Deliver.** SendUserFile the final mp4, update memory, write notes.
 

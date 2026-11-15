@@ -1,0 +1,23 @@
+# Shared runtime & build artifacts
+runtime/remotion/node_modules/
+runtime/remotion/dist/
+remotion-tmp/
+**/__pycache__/
+*.pyc
+
+# Per-short generated media & caches
+shorts/*/out/
+shorts/*/audio/_cache/
+shorts/*/audio/*.wav
+shorts/*/voice/*.wav
+
+# Environment / secrets
+.env
+.env.*
+*.env
+
+# Pre-existing local workspace folders (preserved untouched)
+/hub/
+/node_modules/
+/packages/
+/projects/

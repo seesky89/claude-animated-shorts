@@ -10,20 +10,31 @@ Proven on **The Bridge That Fell for a Song**, a 67 s short about the 1831 Broug
 | Path | What it is |
 |---|---|
 | `SKILL.md` | The skill: the full pipeline, every rule, every fix, and the final look values |
-| `templates/bridge/` | The full source of the bridge short: world, characters, ink, lens blur, grade, story/camera |
-| `templates/audio/` | The synthesized sound: SFX, march music, the mix with ducking and loudness |
-| `templates/scripts/` | Stills, side-by-side sheets, shot merge and frame-by-frame QA helpers |
+| `runtime/remotion/` | Shared Remotion + Three.js host (`node_modules`, `src/core/`, `public/`) installed **once** |
+| `runtime/audio/` | Shared audio DSP & synthesis engine (`mix.py --project shorts/<name>`) |
+| `runtime/scripts/` | Shared scaffolding, stills, render, QA, and side-by-side helpers with auto temp cleanup |
+| `templates/` | Original reference templates (`bridge/`, `audio/`, `scripts/`) |
 | `references/STYLE_BIBLE.md` | The script and visual formula measured from 20 reference shorts |
 | `references/reports/` | Seven measured reports: motion, depth, textures, characters, lighting, outlines, grade |
 | `references/frames/` | 38 full-size reference frames (540x960) to compare your frames against |
 | `references/sheets/` | 20 contact sheets, one per reference short, 60 frames each (1,200 frames) |
 
-## Install
-1. Copy this folder to `~/.claude/skills/cartoon-3d-short/` (clone it there, or download the ZIP).
-2. You need [Remotion](https://www.remotion.dev/) with `@remotion/three`, plus Node, Python 3 and ffmpeg.
-3. In Claude Code, say: *"Use the cartoon short skill and make a short about …"*.
-
-Claude then follows `SKILL.md`: topic and facts, then script, then voice, then the shot plan in `story.ts`, then stills, then renders. Agents check your frames against the reports and the frames, and you get the final 2K render and sound mix.
+## Install & Setup (Shared Runtime)
+1. Install Node dependencies **once** in `runtime/remotion/`:
+   ```bash
+   cd runtime/remotion && npm install
+   ```
+2. You need Node.js, Python 3 (`numpy`, `scipy`, `Pillow`), and `ffmpeg`.
+3. Create a lightweight short project (no `node_modules` or engine duplication):
+   ```bash
+   python runtime/scripts/init_short.py my_short
+   ```
+4. Render stills or final video using the shared runtime:
+   ```bash
+   node runtime/scripts/stills.mjs --project shorts/my_short --frames 100,400 --scale 0.5
+   python runtime/audio/mix.py --project shorts/my_short --clean-cache
+   node runtime/scripts/render.mjs --project shorts/my_short --2k
+   ```
 
 ## Notes
 - Set `REMOTION_TMP` to a folder on a big drive. Every Remotion bundle copies `public/` (~1.3 GB) into the temp folder.
